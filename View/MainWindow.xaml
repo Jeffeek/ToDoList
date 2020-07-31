@@ -1,0 +1,93 @@
+﻿<Window
+    x:Class="ToDoListWPF.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ToDoListWPF"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="600"
+    Height="450"
+    MinWidth="600"
+    MinHeight="450"
+    MaxWidth="800"
+    MaxHeight="600"
+    mc:Ignorable="d" Closing="Window_Closing">
+    <Window.DataContext>
+        <local:ToDoListModelView/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="50" Name="navigation"/>
+        </Grid.RowDefinitions>
+        <ListBox
+                x:Name="ListBoxList"
+                Grid.Row="0"
+                ItemsSource="{Binding Items}">
+            <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="50" MaxWidth="{Binding ElementName=ListBoxList, Path=ActualWidth}"/>
+                                <ColumnDefinition Width="{Binding ElementName=btnDelete, Path=ActualWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Path=CreateTime}" Foreground="Black" IsReadOnly="True" Grid.Column="0" Margin="10 0 10 0"/>
+                            <Border BorderThickness="0.1" Background="Black" CornerRadius="5" Grid.Column="1" Height="20" Margin="10 0 10 0">
+                                <CheckBox IsChecked="{Binding Path=IsDone}" BorderBrush="Black" Background="#FF767676"/>
+                            </Border>
+                            <TextBox Text="{Binding Path=Text}" Foreground="Black" Grid.Column="2" materialDesign:HintAssist.Hint="Текст" materialDesign:ColorZoneAssist.Foreground="Black" materialDesign:HintAssist.Foreground="CornflowerBlue" Margin="10 0 10 0">
+                            </TextBox>
+                            <Button x:Name="btnDelete" Content="Delete" Command="{Binding DataContext.Remove, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding}" Grid.Column="3"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+        </ListBox>
+        <ToggleButton Grid.Row="1" Background="Aquamarine" IsChecked="True" Name="toggleBtn" HorizontalAlignment="Left">
+            <ToggleButton.Triggers>
+                <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="pnl" Storyboard.TargetProperty="Height" BeginTime="0:0:0" From="50" To="0" Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="ToggleButton.Checked">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="pnl" Storyboard.TargetProperty="Height" BeginTime="0:0:0" From="0" To="50" Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </ToggleButton.Triggers>
+        </ToggleButton>
+            <StackPanel Grid.Row ="2" Orientation="Horizontal" HorizontalAlignment="Center" Name="pnl">
+            <Button
+                Content="ADD"
+                materialDesign:ButtonAssist.CornerRadius="15"
+                Foreground="AliceBlue"
+                FontSize="18"
+                Command="{Binding Add}"/>
+            <Button
+                Margin="20 0 0 0"
+                Content="Delete All"
+                Foreground="AliceBlue"
+                materialDesign:ButtonAssist.CornerRadius="15"
+                Background="Crimson"
+                FontSize="18"
+                Command="{Binding DeleteAll}"/>
+            <Button
+                Margin="20 0 0 0"
+                Content="Save"
+                Foreground="AliceBlue"
+                materialDesign:ButtonAssist.CornerRadius="15"
+                Background="DodgerBlue"
+                FontSize="18"
+                Command="{Binding Save}"/>
+        </StackPanel>
+    </Grid>
+</Window>
